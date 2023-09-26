@@ -66,33 +66,24 @@ print('Validation data done!')
 # download train
 print('Downloading train data...')
 # download train 1
-# download images
+# download images 1
 train_images_url = 'https://zenodo.org/record/3893508/files/ribfrac-train-images-1.zip?download=1'
 file_path = os.path.join(TRAIN_DIR, 'ribfrac-train-images-1.zip')
 download_url(train_images_url, file_path, TRAIN_DIR, zip=True)
 os.remove(file_path)
-# download labels
-train_labels_url = 'https://zenodo.org/record/3893508/files/ribfrac-train-labels-1.zip?download=1'
-file_path = os.path.join(TRAIN_DIR, 'ribfrac-train-labels-1.zip')
-download_url(train_labels_url, file_path, TRAIN_DIR, zip=True)
-os.remove(file_path)
+
 
 # download train 2
-# download images
+# download images 1
 train_images_url = 'https://zenodo.org/record/3893498/files/ribfrac-train-images-2.zip?download=1'
 file_path = os.path.join(TRAIN_DIR, 'ribfrac-train-images-2.zip')
 download_url(train_images_url, file_path, TRAIN_DIR, zip=True)
 os.remove(file_path)
-# download labels
-train_labels_url = 'https://zenodo.org/record/3893498/files/ribfrac-train-labels-2.zip?download=1'
-file_path = os.path.join(TRAIN_DIR, 'ribfrac-train-labels-2.zip')
-download_url(train_labels_url, file_path, TRAIN_DIR, zip=True)
-os.remove(file_path)
 
 # merge train 1 and train 2
 # move images
-train_images_1 = os.path.join(TRAIN_DIR, 'ribfrac-train-images-1')
-train_images_2 = os.path.join(TRAIN_DIR, 'ribfrac-train-images-2')
+train_images_1 = os.path.join(TRAIN_DIR, 'Part1')
+train_images_2 = os.path.join(TRAIN_DIR, 'Part2')
 train_images = os.path.join(TRAIN_DIR, 'ribfrac-train-images')
 os.makedirs(train_images)
 shutil.move(train_images_1, train_images)
@@ -101,9 +92,22 @@ shutil.move(train_images_2, train_images)
 os.rmdir(train_images_1)
 os.rmdir(train_images_2)
 
+
+# download labels 1
+train_labels_url = 'https://zenodo.org/record/3893508/files/ribfrac-train-labels-1.zip?download=1'
+file_path = os.path.join(TRAIN_DIR, 'ribfrac-train-labels-1.zip')
+download_url(train_labels_url, file_path, TRAIN_DIR, zip=True)
+os.remove(file_path)
+
+# download labels 2
+train_labels_url = 'https://zenodo.org/record/3893498/files/ribfrac-train-labels-2.zip?download=1'
+file_path = os.path.join(TRAIN_DIR, 'ribfrac-train-labels-2.zip')
+download_url(train_labels_url, file_path, TRAIN_DIR, zip=True)
+os.remove(file_path)
+
 # move labels
-train_labels_1 = os.path.join(TRAIN_DIR, 'ribfrac-train-labels-1')
-train_labels_2 = os.path.join(TRAIN_DIR, 'ribfrac-train-labels-2')
+train_labels_1 = os.path.join(TRAIN_DIR, 'Part1')
+train_labels_2 = os.path.join(TRAIN_DIR, 'Part2')
 train_labels = os.path.join(TRAIN_DIR, 'ribfrac-train-labels')
 os.makedirs(train_labels)
 shutil.move(train_labels_1, train_labels)
