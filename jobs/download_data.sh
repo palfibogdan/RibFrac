@@ -10,6 +10,5 @@
 
 
 # Run script from $HOME
-conda activate medical
 cd RibFrac
 srun python code/download_data.py
