@@ -8,10 +8,13 @@
 #SBATCH --output=create_env.out
 #SBATCH --job-name=env
 
-# Execute program located in $HOME
+# # Run script from $HOME
+module purge
 module load 2022
 module load Anaconda3/2022.05
-git clone https://github.com/Project-MONAI/MONAI.git
-cd MONAI/
-conda create -n medical python=3.8
-conda env update -n medical -f environment-dev.yml
+module load PyTorch/1.12.0-foss-2022a-CUDA-11.7.0
+
+conda create -n medical python=3.8 -y
+conda activate medical
+conda install -c conda-forge monai
+conda init --all

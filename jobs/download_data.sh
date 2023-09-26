@@ -9,7 +9,7 @@
 #SBATCH --job-name=data
 
 
-# Execute program located in $HOME
+# Run script from $HOME
 conda activate medical
 cd RibFrac
 srun python code/download_data.py
