@@ -52,7 +52,6 @@ print('Downloading validation data...')
 val_images_url = 'https://zenodo.org/record/3893496/files/ribfrac-val-images.zip?download=1'
 file_path = os.path.join(VAL_DIR, 'ribfrac-val-images.zip')
 download_url(val_images_url, file_path, VAL_DIR, zip=True)
-os.remove(file_path)
 # download labels
 val_labels_url = 'https://zenodo.org/record/3893496/files/ribfrac-val-labels.zip?download=1'
 file_path = os.path.join(VAL_DIR, 'ribfrac-val-labels.zip')
