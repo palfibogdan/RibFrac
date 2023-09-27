@@ -129,10 +129,10 @@ class DiceCELoss(nn.Module):
 def train(train_folder="data/train", val_folder="data/val", model_folder="runs"):
     """run a training pipeline."""
 
-    train_image_path = os.path.join(train_folder, "ribrac-train-images")
-    train_label_path = os.path.join(train_folder, "ribrac-train-labels")
-    val_image_path = os.path.join(val_folder, "ribrac-val-images")
-    val_label_path = os.path.join(val_folder, "ribrac-val-labels")
+    train_image_path = os.path.join(train_folder, "ribfrac-train-images")
+    train_label_path = os.path.join(train_folder, "ribfrac-train-labels")
+    val_image_path = os.path.join(val_folder, "ribfrac-val-images")
+    val_label_path = os.path.join(val_folder, "ribfrac-val-labels")
     
     train_images = sorted(glob.glob(os.path.join(train_image_path, "*-image.nii.gz")))
     train_labels = sorted(glob.glob(os.path.join(train_label_path, "*-label.nii.gz")))
@@ -247,7 +247,7 @@ def infer(data_folder="data/test", model_folder="runs", prediction_folder="outpu
     net.load_state_dict(torch.load(ckpt, map_location=device))
     net.eval()
 
-    data_folder = os.pathjoin(data_folder, "ribrac-test-images")
+    data_folder = os.pathjoin(data_folder, "ribfrac-test-images")
     image_folder = os.path.abspath(data_folder)
     images = sorted(glob.glob(os.path.join(image_folder, "*-image.nii.gz")))
     logging.info(f"infer: image ({len(images)}) folder: {data_folder}")
