@@ -12,4 +12,4 @@
 # Execute program located in $HOME
 conda activate medical
 cd RibFrac
-srun python code/train_unet.py
+srun python Code/train_unet.py
