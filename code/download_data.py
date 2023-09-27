@@ -26,6 +26,18 @@ def download_url(url, path, extract_path, zip=False):
             zip_ref.extractall(extract_path)
 
 
+def move_files(source, destination):
+    allfiles = os.listdir(source)
+    
+    # iterate on all files to move them to destination folder
+    for f in allfiles:
+        src_path = os.path.join(source, f)
+        dst_path = os.path.join(destination, f)
+        print(dst_path)
+        os.rename(src_path, dst_path)
+
+    shutil.rmtree(source)
+
 # create dirs
 if not os.path.exists(DATA_DIR):
     os.makedirs(DATA_DIR)
@@ -87,9 +99,8 @@ train_images_1 = os.path.join(TRAIN_DIR, 'Part1')
 train_images_2 = os.path.join(TRAIN_DIR, 'Part2')
 train_images = os.path.join(TRAIN_DIR, 'ribfrac-train-images')
 os.makedirs(train_images)
-shutil.move(train_images_1, train_images)
-shutil.move(train_images_2, train_images)
-
+move_files(train_images_1, train_images)
+move_files(train_images_2, train_images)
 
 # download labels 1
 train_labels_url = 'https://zenodo.org/record/3893508/files/ribfrac-train-labels-1.zip?download=1'
@@ -109,5 +120,5 @@ train_labels_1 = os.path.join(TRAIN_DIR, 'Part1')
 train_labels_2 = os.path.join(TRAIN_DIR, 'Part2')
 train_labels = os.path.join(TRAIN_DIR, 'ribfrac-train-labels')
 os.makedirs(train_labels)
-shutil.move(train_labels_1, train_labels)
-shutil.move(train_labels_2, train_labels)
+move_files(train_labels_1, train_labels)
+move_files(train_labels_2, train_labels)
