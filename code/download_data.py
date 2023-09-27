@@ -80,6 +80,7 @@ file_path = os.path.join(TRAIN_DIR, 'ribfrac-train-images-2.zip')
 download_url(train_images_url, file_path, TRAIN_DIR, zip=True)
 os.remove(file_path)
 
+
 # merge train 1 and train 2
 # move images
 train_images_1 = os.path.join(TRAIN_DIR, 'Part1')
@@ -88,9 +89,6 @@ train_images = os.path.join(TRAIN_DIR, 'ribfrac-train-images')
 os.makedirs(train_images)
 shutil.move(train_images_1, train_images)
 shutil.move(train_images_2, train_images)
-# delete empty dirs
-os.rmdir(train_images_1)
-os.rmdir(train_images_2)
 
 
 # download labels 1
@@ -105,6 +103,7 @@ file_path = os.path.join(TRAIN_DIR, 'ribfrac-train-labels-2.zip')
 download_url(train_labels_url, file_path, TRAIN_DIR, zip=True)
 os.remove(file_path)
 
+
 # move labels
 train_labels_1 = os.path.join(TRAIN_DIR, 'Part1')
 train_labels_2 = os.path.join(TRAIN_DIR, 'Part2')
@@ -112,6 +111,3 @@ train_labels = os.path.join(TRAIN_DIR, 'ribfrac-train-labels')
 os.makedirs(train_labels)
 shutil.move(train_labels_1, train_labels)
 shutil.move(train_labels_2, train_labels)
-# delete empty dirs
-os.rmdir(train_labels_1)
-os.rmdir(train_labels_2)
