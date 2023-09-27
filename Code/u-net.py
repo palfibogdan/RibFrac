@@ -204,7 +204,7 @@ def train(train_folder="data/train", val_folder="data/val", model_folder="runs")
     # evaluator as an event handler of the trainer
     train_handlers = [
         ValidationHandler(validator=evaluator, interval=1, epoch_level=True),
-        StatsHandler(tag_name="train_loss", output_transform=from_engine(["loss"], first=True)),
+        StatsHandler(tag_name="train_loss", output_transform=from_engine(["loss"], first=True), name="StatsHandler"),
     ]
     trainer = monai.engines.SupervisedTrainer(
         device=device,
@@ -247,7 +247,7 @@ def infer(data_folder="data/test", model_folder="runs", prediction_folder="outpu
     net.load_state_dict(torch.load(ckpt, map_location=device))
     net.eval()
 
-    data_folder = os.pathjoin(data_folder, "ribfrac-test-images")
+    data_folder = os.path.join(data_folder, "ribfrac-test-images")
     image_folder = os.path.abspath(data_folder)
     images = sorted(glob.glob(os.path.join(image_folder, "*-image.nii.gz")))
     logging.info(f"infer: image ({len(images)}) folder: {data_folder}")
@@ -264,7 +264,7 @@ def infer(data_folder="data/test", model_folder="runs", prediction_folder="outpu
     )
 
     inferer = get_inferer()
-    saver = monai.transforms.SaveImage(output_dir=prediction_folder, mode="nearest", resample=True)
+    saver = monai.transforms.SaveImage(output_dir=prediction_folder, mode="nearest", resample=True, separate_folder=False)
     with torch.no_grad():
         for infer_data in infer_loader:
             logging.info(f"segmenting {infer_data['image'].meta['filename_or_obj']}")
@@ -288,15 +288,15 @@ def infer(data_folder="data/test", model_folder="runs", prediction_folder="outpu
 
     files = os.listdir(prediction_folder)
     for f in files:
-        new_name = f.replace("image", "label")
+        new_name = f.replace("image_trans", "label")
         os.rename(os.path.join(prediction_folder, f), os.path.join(prediction_folder, new_name))
 
 
 if __name__ == "__main__":
     """
     Usage:
-        python u-net.py train --train_folder "data/train" --val_folder "data/val" # run the training pipeline
-        python u-net.py infer --test_folder "data/test" # run the inference pipeline
+        python Code/u-net.py train --train_folder "data/train" --val_folder "data/val" # run the training pipeline
+        python Code/u-net.py infer --test_folder "data/test" # run the inference pipeline
     """
     parser = argparse.ArgumentParser(description="Run a basic UNet segmentation baseline.")
     parser.add_argument(
