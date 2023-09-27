@@ -126,26 +126,27 @@ class DiceCELoss(nn.Module):
         return dice + cross_entropy
 
 
-def train(data_folder=".", model_folder="runs"):
+def train(train_folder="data/train", val_folder="data/val", model_folder="runs"):
     """run a training pipeline."""
 
-    images = sorted(glob.glob(os.path.join(data_folder, "*-image.nii.gz")))
-    labels = sorted(glob.glob(os.path.join(data_folder, "*-label.nii.gz")))
-    images = images[:4]
-    labels = labels[:4]
-    print(images)
-    print(labels)
-    logging.info(f"training: image/label ({len(images)}) folder: {data_folder}")
+    train_image_path = os.path.join(train_folder, "ribrac-train-images")
+    train_label_path = os.path.join(train_folder, "ribrac-train-labels")
+    val_image_path = os.path.join(val_folder, "ribrac-val-images")
+    val_label_path = os.path.join(val_folder, "ribrac-val-labels")
+    
+    train_images = sorted(glob.glob(os.path.join(train_image_path, "*-image.nii.gz")))
+    train_labels = sorted(glob.glob(os.path.join(train_label_path, "*-label.nii.gz")))
+    
+    val_images = sorted(glob.glob(os.path.join(val_image_path, "*-image.nii.gz")))
+    val_labels = sorted(glob.glob(os.path.join(val_label_path, "*-label.nii.gz")))
+
+    logging.info(f"training: image/label ({len(train_images)}) folder: {train_folder}")
+    logging.info(f"validation: image/label ({len(val_images)}) folder: {val_folder}")
 
     amp = True  # auto. mixed precision
     keys = ("image", "label")
-    train_frac, val_frac = 0.8, 0.2
-    n_train = int(train_frac * len(images)) + 1
-    n_val = min(len(images) - n_train, int(val_frac * len(images)))
-    logging.info(f"training: train {n_train} val {n_val}, folder: {data_folder}")
-
-    train_files = [{keys[0]: img, keys[1]: seg} for img, seg in zip(images[:n_train], labels[:n_train])]
-    val_files = [{keys[0]: img, keys[1]: seg} for img, seg in zip(images[-n_val:], labels[-n_val:])]
+    train_files = [{keys[0]: img, keys[1]: seg} for img, seg in zip(train_images, train_labels)]
+    val_files = [{keys[0]: img, keys[1]: seg} for img, seg in zip(val_images, val_labels)]
 
     # create a training data loader
     batch_size = 2
@@ -230,7 +231,7 @@ def get_dice_score(engine):
 	print("THE MEAN DICE: ", score["val_mean_dice"])
 	return score["val_mean_dice"]
 
-def infer(data_folder=".", model_folder="runs", prediction_folder="output"):
+def infer(data_folder="data/test", model_folder="runs", prediction_folder="output"):
     """
     run inference, the output folder will be "./output"
     """
@@ -246,8 +247,9 @@ def infer(data_folder=".", model_folder="runs", prediction_folder="output"):
     net.load_state_dict(torch.load(ckpt, map_location=device))
     net.eval()
 
+    data_folder = os.pathjoin(data_folder, "ribrac-test-images")
     image_folder = os.path.abspath(data_folder)
-    images = sorted(glob.glob(os.path.join(image_folder, "*_ct.nii.gz")))
+    images = sorted(glob.glob(os.path.join(image_folder, "*-image.nii.gz")))
     logging.info(f"infer: image ({len(images)}) folder: {data_folder}")
     infer_files = [{"image": img} for img in images]
 
@@ -284,32 +286,25 @@ def infer(data_folder=".", model_folder="runs", prediction_folder="output"):
             for p in preds:  # save each image+metadata in the batch respectively
                 saver(p)
 
-    # copy the saved segmentations into the required folder structure for submission
-    submission_dir = os.path.join(prediction_folder, "to_submit")
-    if not os.path.exists(submission_dir):
-        os.makedirs(submission_dir)
-    files = glob.glob(os.path.join(prediction_folder, "volume*", "*.nii.gz"))
+    files = os.listdir(prediction_folder)
     for f in files:
-        new_name = os.path.basename(f)
-        #TODO FOR INFERRING RENAME THE FILES FOR RIBS DATA
-        new_name = new_name[len("volume-covid19-A-0") :]
-        new_name = new_name[: -len("_ct_seg.nii.gz")] + ".nii.gz"
-        to_name = os.path.join(submission_dir, new_name)
-        shutil.copy(f, to_name)
-    logging.info(f"predictions copied to {submission_dir}.")
+        new_name = f.replace("image", "label")
+        os.rename(os.path.join(prediction_folder, f), os.path.join(prediction_folder, new_name))
 
 
 if __name__ == "__main__":
     """
     Usage:
-        python u-net.py train --data_folder "Data\Validation" # run the training pipeline
-        python u-net.py infer --data_folder "COVID-19-20_v2/Validation" # run the inference pipeline
+        python u-net.py train --train_folder "data/train" --val_folder "data/val" # run the training pipeline
+        python u-net.py infer --test_folder "data/test" # run the inference pipeline
     """
     parser = argparse.ArgumentParser(description="Run a basic UNet segmentation baseline.")
     parser.add_argument(
         "mode", metavar="mode", default="train", choices=("train", "infer"), type=str, help="mode of workflow"
     )
-    parser.add_argument("--data_folder", default="", type=str, help="training data folder")
+    parser.add_argument("--train_folder", default="data/train", type=str, help="training data folder")
+    parser.add_argument("--val_folder", default="data/val", type=str, help="validation data folder")
+    parser.add_argument("--test_folder", default="data/test", type=str, help="test data folder")
     parser.add_argument("--model_folder", default="runs", type=str, help="model folder")
     args = parser.parse_args()
 
@@ -318,10 +313,11 @@ if __name__ == "__main__":
     logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
     if args.mode == "train":
-        data_folder = args.data_folder or os.path.join("Data/Train", "Train")
-        train(data_folder=data_folder, model_folder=args.model_folder)
+        train_folder = args.train_folder
+        val_folder = args.val_folder
+        train(train_folder=train_folder, val_folder=val_folder, model_folder=args.model_folder)
     elif args.mode == "infer":
-        data_folder = args.data_folder or os.path.join("Data/Validation", "Validation")
-        infer(data_folder=data_folder, model_folder=args.model_folder)
+        test_folder = args.test_folder
+        infer(data_folder=test_folder, model_folder=args.model_folder)
     else:
         raise ValueError("Unknown mode.")
