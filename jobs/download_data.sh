@@ -11,4 +11,4 @@
 
 # Run script from $HOME
 cd RibFrac
-srun python code/download_data.py
+srun python Code/download_data.py
