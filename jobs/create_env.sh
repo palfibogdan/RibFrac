@@ -12,9 +12,10 @@
 module purge
 module load 2022
 module load Anaconda3/2022.05
-module load PyTorch/1.12.0-foss-2022a-CUDA-11.7.0
 
 conda create -n medical python=3.8 -y
 conda activate medical
 conda install -c conda-forge monai
+conda install -c pytorch ignite
+conda install -c conda-forge packaging
 conda init --all
