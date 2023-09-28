@@ -64,19 +64,18 @@ def get_xforms(mode="train", keys=("image", "label")):
                 RandFlipd(keys, spatial_axis=0, prob=0.5),
                 RandFlipd(keys, spatial_axis=1, prob=0.5),
                 RandFlipd(keys, spatial_axis=2, prob=0.5),
-                #! NEW
+                #! NEW # transform all non 0 labels to 1
                 AsDiscreted(keys[1], threshold=0.5)
             ]
         )
         dtype = (torch.float32, torch.uint8)
     if mode == "val":
-        #! NEW
+        #! NEW # transform all non 0 labels to 1
         xforms.extend([AsDiscreted(keys[1], threshold=0.5)])
         dtype = (torch.float32, torch.uint8)
     if mode == "infer":
         dtype = (torch.float32,)
     xforms.extend([CastToTyped(keys, dtype=dtype)])
-    # transform all non 0 labels to 1
     
     return monai.transforms.Compose(xforms)
 
@@ -126,7 +125,7 @@ class DiceCELoss(nn.Module):
         return dice + cross_entropy
 
 
-def train(train_folder="data/train", val_folder="data/val", model_folder="runs"):
+def train(train_folder="data/train", val_folder="data/val", model_folder="runs/u-net"):
     """run a training pipeline."""
 
     train_image_path = os.path.join(train_folder, "ribfrac-train-images")
@@ -231,7 +230,7 @@ def get_dice_score(engine):
 	print("THE MEAN DICE: ", score["val_mean_dice"])
 	return score["val_mean_dice"]
 
-def infer(data_folder="data/test", model_folder="runs", prediction_folder="output"):
+def infer(data_folder="data/test", model_folder="runs/u-net", prediction_folder="output/u-net"):
     """
     run inference, the output folder will be "./output"
     """
@@ -305,7 +304,7 @@ if __name__ == "__main__":
     parser.add_argument("--train_folder", default="data/train", type=str, help="training data folder")
     parser.add_argument("--val_folder", default="data/val", type=str, help="validation data folder")
     parser.add_argument("--test_folder", default="data/test", type=str, help="test data folder")
-    parser.add_argument("--model_folder", default="runs", type=str, help="model folder")
+    parser.add_argument("--model_folder", default="runs/u-net", type=str, help="model folder")
     args = parser.parse_args()
 
     monai.config.print_config()
