@@ -14,8 +14,5 @@ module load 2022
 module load Anaconda3/2022.05
 
 conda create -n medical python=3.8 -y
-conda activate medical
-conda install -c conda-forge monai
-conda install -c pytorch ignite
-conda install -c conda-forge packaging
+conda env update -n medical -f RibFrac/env.yml
 conda init --all
