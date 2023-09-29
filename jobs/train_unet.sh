@@ -8,9 +8,8 @@
 #SBATCH --output=train_unet.out
 #SBATCH --job-name=train_unet
 
-
 # Execute program located in $HOME
-conda activate medical
+source activate medical
 
 cd RibFrac
 srun python Code/u-net.py --mode train --train_folder "data/train" --val_folder "data/val"
