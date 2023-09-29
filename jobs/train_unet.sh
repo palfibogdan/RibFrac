@@ -12,4 +12,4 @@
 source activate medical
 
 cd RibFrac
-srun python Code/u-net.py --mode train --train_folder "data/train" --val_folder "data/val"
+srun python Code/u-net.py train --train_folder "data/train" --val_folder "data/val"
