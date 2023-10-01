@@ -13,6 +13,6 @@ module purge
 module load 2022
 module load Anaconda3/2022.05
 
-conda create -n medical python=3.8 -y
-conda env update -n medical -f RibFrac/env.yml
+conda create -n medical-new python=3.8 -y
+conda env update -n medical-new -f RibFrac/env.yml
 conda init --all

@@ -9,7 +9,7 @@
 #SBATCH --job-name=train_unet
 
 # Execute program located in $HOME
-source activate medical
+source activate medical-new
 
 cd RibFrac
 srun python Code/u-net.py train --train_folder "data/train" --val_folder "data/val"

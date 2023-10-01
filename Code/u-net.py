@@ -15,6 +15,7 @@ import logging
 import os
 import shutil
 import sys
+import wandb
 
 import torch
 import torch.nn as nn
